@@ -51,18 +51,31 @@ const getReadme = async (owner, repo) => {
   const response = await fetch(
     `https://api.github.com/repos/${owner}/${repo}/readme`,
     {
-      headers: {
-        Accept: "application/vnd.github.raw+json",
-      },
-      githubHeaders,
+      headers: githubHeaders,
     },
   );
 
+  console.log("README status:", response.status);
+
   if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    console.log("README error:", errorData);
+
+    // Repository doesn't have a README
+    if (response.status === 404) {
+      return "";
+    }
+
     throw new Error("Failed to fetch README");
   }
 
-  return response.text();
+  const data = await response.json();
+
+  if (!data.content) {
+    return "";
+  }
+
+  return Buffer.from(data.content, "base64").toString("utf-8");
 };
 
 const getCommits = async (owner, repo) => {
