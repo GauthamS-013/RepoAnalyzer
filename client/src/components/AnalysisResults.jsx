@@ -136,12 +136,7 @@ const AnalysisResults = ({ analysis }) => {
 
         <div className="mt-6 rounded-xl border shadow-md p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-8">
           <div>
-            <p className="text-sm font-semibold text-gray-500">OVERALL SCORE</p>
-
-            <h2 className="text-5xl font-bold mt-2 text-emerald-800">
-              {aiAnalysis.overallScore}
-              <span className="text-2xl">/100</span>
-            </h2>
+            <p className="text-2xl font-semibold text-emerald-800">Overall Score</p>
 
             <p className="max-w-2xl text-gray-700 mt-4">{aiAnalysis.summary}</p>
           </div>
