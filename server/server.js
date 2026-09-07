@@ -8,29 +8,40 @@ const analyzeRoute = require("./routes/analyze");
 
 const app = express();
 
-
 // -------------------------
 // CORS
 // -------------------------
 
 const allowedOrigins = [
   "http://localhost:5173",
-  process.env.FRONTEND_URL,
-].filter(Boolean);
+  "https://repo-analyzer-omega.vercel.app",
+];
 
 app.use(
   cors({
-    origin: allowedOrigins,
-  })
-);
+    origin: function (origin, callback) {
+      // Allow requests with no origin
+      // (Postman, server-to-server requests, etc.)
+      if (!origin) {
+        return callback(null, true);
+      }
 
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(new Error("Not allowed by CORS"));
+    },
+    methods: ["GET", "POST", "OPTIONS"],
+    allowedHeaders: ["Content-Type"],
+  }),
+);
 
 // -------------------------
 // Middleware
 // -------------------------
 
 app.use(express.json());
-
 
 // -------------------------
 // Rate Limiting
@@ -47,7 +58,6 @@ const analyzeLimiter = rateLimit({
   },
 });
 
-
 // -------------------------
 // Routes
 // -------------------------
@@ -59,7 +69,6 @@ app.get("/", (req, res) => {
     message: "GitHub Repository Analyzer API is running",
   });
 });
-
 
 // -------------------------
 // Server
